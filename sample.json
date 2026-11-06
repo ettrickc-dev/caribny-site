@@ -1,0 +1,31 @@
+{
+  "categories": [
+    {"id":1,"slug":"restaurants","name":"Restaurants & Takeout","sort_order":10},
+    {"id":2,"slug":"catering","name":"Catering & Bakeries","sort_order":20},
+    {"id":3,"slug":"groceries","name":"Caribbean Groceries","sort_order":30},
+    {"id":5,"slug":"shipping","name":"Shipping & Barrels","sort_order":50},
+    {"id":13,"slug":"community","name":"Community & Consulates","sort_order":150}
+  ],
+  "businesses": [
+    {"id":"40745083-4adc-40b0-b810-3a688477acfa","slug":"jasmine-s-caribbean-cuisine-manhattan","name":"Jasmine's Caribbean Cuisine","category_id":1,"description":"Caribbean restaurant in Hell's Kitchen, handy before a show.","address":null,"neighborhood":"Hell's Kitchen","city":"Manhattan","region":"Manhattan","phone":"(646) 964-5337","website":"https://www.jasminecaribbeancuisine.com","photo_urls":[],"status":"claimed","verified_at":"2026-11-06T01:56:31Z","islands":[]},
+    {"id":"a1","slug":"kingston-harlem-manhattan","name":"Kingston (Harlem)","category_id":1,"description":"Jamaican and Caribbean restaurant and bar in Harlem.","neighborhood":"Harlem","city":"Manhattan","region":"Manhattan","photo_urls":[],"status":"unclaimed","islands":["jamaica"]},
+    {"id":"b1","slug":"ali-s-roti-shop-brooklyn","name":"Ali's Roti Shop","category_id":1,"description":"Trinidadian roti shop known for dhal puri roti and doubles.","neighborhood":"Flatbush","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":["trinidad-tobago"]},
+    {"id":"b2","slug":"culpepper-s-brooklyn","name":"Culpepper's","category_id":1,"description":"Barbadian restaurant and bakery known for flying fish and cou-cou, fish cakes and mauby.","neighborhood":"Crown Heights","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":["barbados"]},
+    {"id":"b3","slug":"bamboo-walk-brooklyn","name":"Bamboo Walk","category_id":1,"description":"Sit-down Jamaican restaurant in Flatbush.","neighborhood":"Flatbush","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":["jamaica"]},
+    {"id":"b4","slug":"immaculee-bakery-brooklyn","name":"Immaculee Bakery","category_id":2,"description":"Haitian bakery known for patties (pate) and pastries.","neighborhood":"Flatbush","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":["haiti"]},
+    {"id":"b5","slug":"dennis-shipping-utica-ave-brooklyn","name":"Dennis Shipping (Utica Ave)","category_id":5,"description":"Long-running barrel and box shipping to Jamaica, including door-to-door service.","neighborhood":"East Flatbush","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":["jamaica"]},
+    {"id":"b6","slug":"labay-market-brooklyn","name":"Labay Market","category_id":3,"description":"Caribbean produce market with breadfruit, callaloo, dasheen and cassava.","neighborhood":"Prospect Lefferts Gardens","city":"Brooklyn","region":"Brooklyn","photo_urls":[],"status":"unclaimed","islands":[]},
+    {"id":"q1","slug":"guyana-s-brown-betty-restaurant-queens","name":"Guyana's Brown Betty Restaurant","category_id":1,"description":"Popular Guyanese restaurant on Liberty Avenue.","neighborhood":"Richmond Hill","city":"Queens","region":"Queens","photo_urls":[],"status":"unclaimed","islands":["guyana"]},
+    {"id":"q2","slug":"singh-s-roti-shop-bar-queens","name":"Singh's Roti Shop & Bar","category_id":1,"description":"Roti shop and bar with chutney, soca and reggae and live bands on Saturday nights.","neighborhood":"Richmond Hill","city":"Queens","region":"Queens","photo_urls":[],"status":"unclaimed","islands":["guyana","trinidad-tobago"]},
+    {"id":"m1","slug":"consulate-general-of-jamaica-manhattan","name":"Consulate General of Jamaica, New York","category_id":13,"description":"Passports, citizenship and other services for Jamaican nationals.","neighborhood":"Midtown","city":"Manhattan","region":"Manhattan","photo_urls":[],"status":"unclaimed","islands":["jamaica"]}
+  ],
+  "events": [
+    {"id":"e1","title":"Soca District: Private Ryan & Friends","starts_at":"2026-11-28T03:00:00+00:00","venue":"Brooklyn venue","neighborhood":"Brooklyn","region":"Brooklyn","url":"https://example.com","is_free":false,"description":"Soca night with Private Ryan.","time_tba":false},
+    {"id":"e2","title":"Caribbean Art Fair (Nov 20–22)","starts_at":"2026-11-20T23:00:00+00:00","venue":"Harlem","neighborhood":"Harlem","region":"Manhattan","url":null,"is_free":true,"description":"Caribbean artists and makers.","time_tba":false},
+    {"id":"e3","title":"Reggae and Soca Fridays at Jouvay","starts_at":"2026-12-19T02:00:00+00:00","venue":"Jouvay","neighborhood":"Queens","region":"Queens","url":null,"is_free":null,"description":null,"time_tba":false}
+  ],
+  "guides": [
+    {"slug":"medicaid-home-care-ny-who-qualifies","title":"Medicaid home care in New York: who qualifies in 2026","summary":"The 2026 income and asset limits.","topic":"community","cta":"ettrickcampbell","sort_order":60,"updated_at":"2026-11-06T02:00:00Z","body_md":"Intro paragraph.\n\n## The 2026 limits\n\n| | Single | Couple |\n|---|---|---|\n| Income | **$1,836** | **$2,489** |\n\n- One\n- Two\n"},
+    {"slug":"uncontested-divorce-ny-explained","title":"Uncontested divorce in New York, explained simply","summary":"What uncontested means.","topic":"divorce","cta":"easydivorcefiling","sort_order":10,"updated_at":"2026-11-01T00:00:00Z","body_md":"Text."}
+  ]
+}
