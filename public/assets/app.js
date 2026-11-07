@@ -43,13 +43,17 @@
       var msg = form.querySelector('.form-msg'), btn = form.querySelector('button[type=submit]');
       var row = {};
       new FormData(form).forEach(function (v, k) { if (v !== '') row[k] = v; });
-      form.querySelectorAll('input[type=checkbox]').forEach(function (c) { row[c.name] = c.checked; });
+      form.querySelectorAll('input[type=checkbox][name]').forEach(function (c) { row[c.name] = c.checked; });
       if (row.starts_at) row.starts_at = new Date(row.starts_at).toISOString();
+      form.querySelectorAll('input[type=datetime-local]').forEach(function (i) { if (i.value && i.name !== 'starts_at') row[i.name] = new Date(i.value).toISOString(); });
+      form.querySelectorAll('input[type=number]').forEach(function (i) { if (i.value !== '') row[i.name] = Number(i.value); });
       if (form.dataset.table === 'subscribers') { row.source = form.dataset.source || 'site'; row.page_path = location.pathname; }
       btn.disabled = true; msg.textContent = 'Sending…';
       post(form.dataset.table, row).then(function (r) {
         if (!r.ok) throw new Error(r.status);
-        form.reset(); msg.textContent = form.dataset.table === 'subscribers' ? "You're subscribed. Thank you!" : 'Thank you! We got it and will review it soon.';
+        form.reset();
+        msg.textContent = form.dataset.table === 'subscribers' ? "You're subscribed. Thank you!" : form.dataset.after === 'fares' ? 'Thanks! Your fare is on the board.' : 'Thank you! We got it and will review it soon.';
+        document.dispatchEvent(new CustomEvent('cny:submitted', { detail: { table: form.dataset.table } }));
       }).catch(function () {
         msg.textContent = 'Sorry, that didn’t go through. Please check the fields and try again.';
       }).finally(function () { btn.disabled = false; });
