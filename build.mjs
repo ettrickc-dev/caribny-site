@@ -193,6 +193,7 @@ const subscribeBox = (source) => `
     <button type="submit">Subscribe</button>
     <p class="form-msg" role="status"></p>
   </form>
+  <p class="muted small">We use your email only to send the CaribNY weekly email. We never sell or share it. Every email has a one-click unsubscribe link.</p>
 </section>`;
 
 // ---------- cards ----------
@@ -214,8 +215,8 @@ function businessCard(b, cat) {
 </li>`;
 }
 function eventCard(e) {
-  const when = e.time_tba ? fmtDate(e.starts_at, { weekday: 'short', month: 'short', day: 'numeric' }) + ' · time TBA'
-    : fmtDate(e.starts_at, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const when = e.time_tba ? fmtDate(e.starts_at, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + ' · time TBA'
+    : fmtDate(e.starts_at, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
   return `<li class="event-card">
   <time datetime="${esc(new Date(e.starts_at).toISOString())}"><span class="ev-m">${fmtDate(e.starts_at, { month: 'short' })}</span><span class="ev-d">${fmtDate(e.starts_at, { day: 'numeric' })}</span></time>
   <div>
@@ -593,6 +594,8 @@ ${topics.map((t) => `<h2 id="${t}">${esc(GUIDE_TOPICS[t])}</h2><ul class="guide-
 <p>Every listing starts from public information. A listing gets the <strong>✓ Verified</strong> badge only when:</p>
 <ol><li>the owner or manager claims it, and</li><li>we confirm their phone number or website matches the business.</li></ol>
 <p>Owner-managed listings without a confirmed contact show "Owner-managed". You can report wrong information on any listing and we review reports within 2 business days. If you own a business and want it removed, use "Remove my business" on its page.</p>
+<h2>Is listing free?</h2>
+<p>Yes. Listing, claiming and the ✓ Verified badge are always free, and businesses cannot pay to be Verified or to change their place in search results. If we ever offer paid promotion, it will be clearly labeled "Sponsored".</p>
 <h2>Guides</h2>
 <p>Our legal and benefits guides are general information, not legal advice. Guides marked "Reviewed by" were reviewed by Ettrick M. Campbell, Esq., a New York attorney (NY Bar #3938966). Links to his practice are attorney advertising.</p>
 </div>`;
@@ -616,7 +619,7 @@ ${topics.map((t) => `<h2 id="${t}">${esc(GUIDE_TOPICS[t])}</h2><ul class="guide-
   <p class="chips">${regionsWith.map((x) => `<a class="chip light" href="/${regionSlug(x.r)}/">${esc(x.r)} (${x.n})</a>`).join('')}</p>
 </div></section>
 <div class="wrap">
-  <section><h2>This week and next</h2>
+  <section><h2>Coming up</h2>
     ${events.length ? `<ul class="event-list">${events.slice(0, 6).map(eventCard).join('')}</ul>` : '<p>No events listed yet.</p>'}
     <p><a href="/events/">All events →</a> · <a href="/carnival/">Carnival guide →</a></p>
   </section>
