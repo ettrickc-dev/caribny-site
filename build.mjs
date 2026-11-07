@@ -9,6 +9,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { marked } from 'marked';
+import { buildDaily, TOOLS } from './lib/daily.mjs';
+import { loadSafety } from './lib/safety.mjs';
 
 const SITE = (process.env.SITE_URL || 'https://caribny.com').replace(/\/$/, '');
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://wfrxpzbchmbvqkzkfepn.supabase.co';
@@ -18,6 +20,7 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
 const OUT = path.resolve('dist');
 const NOINDEX = process.env.NOINDEX === '1'; // set on preview sites
 const BUILD_DATE = new Date();
+const V = BUILD_DATE.getTime().toString(36); // cache-buster for /assets (cached 7 days)
 
 // ---------- reference data ----------
 const REGIONS = ['Brooklyn', 'Queens', 'Bronx', 'Manhattan', 'Long Island', 'Westchester'];
@@ -99,7 +102,14 @@ async function loadData() {
     fetchTable('events', `select=*&status=eq.published&starts_at=gte.${since}&order=starts_at.asc`),
     fetchTable('guides', 'select=*&status=eq.published&order=sort_order.asc')
   ]);
-  return { businesses, categories, events, guides };
+  // Daily-tools tables: optional, so a problem here never breaks the main site.
+  const optional = (t, q) => fetchTable(t, q).catch((e) => { console.warn(`[optional] ${t}: ${e.message}`); return []; });
+  const [memorial_notices, linkup_groups, shipping_cutoffs] = await Promise.all([
+    optional('memorial_notices', 'select=id,deceased_name,age,island,hometown,ny_area,passed_on,notice_type,service_at,service_location,details,posted_by,relationship,status,created_at&status=eq.published&order=created_at.desc&limit=300'),
+    optional('linkup_groups', 'select=id,name,kind,island,region,neighborhood,meets,description,website,public_contact,status,created_at&status=eq.published&order=name.asc'),
+    optional('shipping_cutoffs', 'select=shipper,business_slug,destination,kind,cutoff_date,ends_on,sail_weekday,cutoff_weekday,note,source_url,verified_on,status&status=eq.published&order=destination.asc')
+  ]);
+  return { businesses, categories, events, guides, memorial_notices, linkup_groups, shipping_cutoffs };
 }
 
 async function write(rel, html) {
@@ -109,7 +119,7 @@ async function write(rel, html) {
 }
 
 // ---------- layout ----------
-function layout({ title, description, canonical, body, schema = [], noindex = false, ogType = 'website' }) {
+function layout({ title, description, canonical, body, schema = [], noindex = false, ogType = 'website', scripts = [] }) {
   const url = SITE + canonical;
   const robots = (NOINDEX || noindex) ? '<meta name="robots" content="noindex,follow">' : '';
   return `<!doctype html>
@@ -129,7 +139,7 @@ ${robots}
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#0f3d2e">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v=${V}">
 ${schema.map(jsonld).join('\n')}
 </head>
 <body>
@@ -138,6 +148,7 @@ ${schema.map(jsonld).join('\n')}
   <div class="wrap header-inner">
     <a class="logo" href="/">Carib<span>NY</span></a>
     <nav class="nav" aria-label="Main">
+      <a href="/today/">Today</a>
       <a href="/directory/">Directory</a>
       <a href="/events/">Events</a>
       <a href="/carnival/">Carnival</a>
@@ -167,11 +178,17 @@ ${body}
         <li><a href="/about/">About &amp; how we verify</a></li>
       </ul>
     </div>
+    <div>
+      <h2 class="h-small">Every day</h2>
+      <ul class="plain">${TOOLS.map((t) => `<li><a href="${t.path}">${esc(t.name)}</a></li>`).join('')}</ul>
+      </ul>
+    </div>
   </div>
   <div class="wrap fine">© ${BUILD_DATE.getFullYear()} CaribNY. Listings are provided for information; always confirm hours before you go.</div>
 </footer>
 <script>window.CARIBNY={url:${JSON.stringify(SUPABASE_URL)},key:${JSON.stringify(SUPABASE_ANON_KEY)}};</script>
-<script src="/assets/app.js" defer></script>
+<script src="/assets/app.js?v=${V}" defer></script>
+${scripts.map((s) => `<script src="${s}?v=${V}" defer></script>`).join('\n')}
 </body>
 </html>`;
 }
@@ -619,6 +636,9 @@ ${topics.map((t) => `<h2 id="${t}">${esc(GUIDE_TOPICS[t])}</h2><ul class="guide-
   <p class="chips">${regionsWith.map((x) => `<a class="chip light" href="/${regionSlug(x.r)}/">${esc(x.r)} (${x.n})</a>`).join('')}</p>
 </div></section>
 <div class="wrap">
+  <section><h2>Check every day</h2>
+    <ul class="tool-grid">${TOOLS.map((t) => `<li><a href="${t.path}"><strong>${esc(t.name)}</strong><span>${esc(t.blurb)}</span></a></li>`).join('')}</ul>
+  </section>
   <section><h2>Coming up</h2>
     ${events.length ? `<ul class="event-list">${events.slice(0, 6).map(eventCard).join('')}</ul>` : '<p>No events listed yet.</p>'}
     <p><a href="/events/">All events →</a> · <a href="/carnival/">Carnival guide →</a></p>
@@ -642,6 +662,14 @@ ${topics.map((t) => `<h2 id="${t}">${esc(GUIDE_TOPICS[t])}</h2><ul class="guide-
     }));
     addUrl('/', 1.0);
   }
+
+  // --- daily tools (live pages)
+  let safety = null;
+  if (!process.env.DATA_FILE && process.env.SKIP_SAFETY !== '1') {
+    try { safety = await loadSafety(); console.log(`Safety data through ${safety.through}`); }
+    catch (e) { console.warn(`[optional] safety stats: ${e.message}`); }
+  } else if (process.env.SAFETY_FILE) safety = JSON.parse(await fs.readFile(process.env.SAFETY_FILE, 'utf8'));
+  await buildDaily({ write, layout, esc, crumbs, crumbSchema, addUrl, fmtDate, events, biz, catById, data, subscribeBox, eventCard, safety, BUILD_DATE });
 
   // --- 404, sitemap, robots
   await write('404.html', layout({ title: 'Page not found | CaribNY', description: 'Page not found.', canonical: '/404.html', noindex: true,
